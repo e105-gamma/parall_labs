@@ -8,10 +8,16 @@ import java.util.NoSuchElementException;
 public class LinkedList<T> implements Iterable<T> {
     Node<T> root=null;
     int size;
+    LinkedList<T> thisList=this;
+
+    void setRoot(Node<T> root){
+        this.root=root;
+    }
 
 
-    private class Node<T>{
+    public class Node<T>{
         T data;
+
         Node<T> next;
         Node<T> back;
         Node(T data){
@@ -32,9 +38,13 @@ public class LinkedList<T> implements Iterable<T> {
         private Node<T> current;
         private int index;
 
+
         ListIterator(){
             int a =size;
-            current = (Node<T>) root;
+            current = new Node<T>(null);
+            current.next= (Node<T>) root;
+            current.next.back = current;
+            //current = (Node<T>)root;
             index=0;
         }
 
@@ -60,10 +70,9 @@ public class LinkedList<T> implements Iterable<T> {
             if(hasNext()==false){
                 throw new NoSuchElementException();
             }
-            Node<T> return_obj=current;
             current=current.next;
             index++;
-            return return_obj.data;
+            return current.data;
         }
 
         public T previous() throws NoSuchElementException {
@@ -71,9 +80,9 @@ public class LinkedList<T> implements Iterable<T> {
                 throw new NoSuchElementException();
             }
             index--;
-            Node<T> return_obj=current;
+            T data=current.data;
             current=current.back;
-            return return_obj.data;
+            return data;
         }
 
 
@@ -85,10 +94,13 @@ public class LinkedList<T> implements Iterable<T> {
                 current.next.back = current.back;
             }
             size--;
+            if(current==root){
+                thisList.root=thisList.root.next;
+            }
             if(index!=0){
                 index--;
             }
-            current=current.next;
+            //current=current.back;
         }
 
         public int nextIndex(){
@@ -109,6 +121,7 @@ public class LinkedList<T> implements Iterable<T> {
                 current.next.back = newNode;
             }
             current.next = newNode;
+            current=current.next;
             size++;
         }
 
